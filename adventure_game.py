@@ -20,13 +20,18 @@ Actions:
 """
 
 from tracemalloc import start
-
+affects_choices = set()
 
 def start_game():
     print("Welcome to the Adventure Game!")
     name = input("What is your name, adventurer? ")
-    print(f"Hello, {name}! Your quest is to find the legendary treasure hidden in this ancient land.")
-    print("You have two paths to choose from: a dark forest or a mysterious cave.")
+    print(f"Hello, {name}! Your quest is to find the Treasure of Tarshish.")
+    print("To find the treasure, you will need to explore different locations, solve puzzles, and make important choices along the way.")
+    print("Before you begin you see an ingraving on a rock, a poem, a clue!!!")
+    print("The treasure of Tarshish was hidden by three.")
+    print("These three could hide in places better than a tree.")
+    print("One was thirsty, one loved puzzles, and the third would say anything for a modest fee.")
+    print("After you read the peom, you have two paths to choose from: a dark forest or a mysterious cave.")
     
     choice = input("Do you want to explore the forest or enter the cave? (forest/cave) ").lower()
     
@@ -53,18 +58,25 @@ def forest_path():
     choice = input("Do you want to follow the river or climb the tree? (river/tree) ").lower()
     
     if choice == "river":
-        print("You follow the river and find a hidden path that leads you to a waterfall. There is a chest at the bottom of the falls! Could it be the treasure?")
-        yes_no = input("Do you want to investigate the chest? (yes/no) ").lower()
-        if yes_no == "yes":
-            dive_climb = input("Should you dive into the water or climb down the cliff to reach the chest? (dive/climb) ").lower()
-            if dive_climb == "dive":
-                print("You dive into the water and swim towards the chest. As you reach it, you find a hidden compartment with a key inside!")
-            elif dive_climb == "climb":
-                print("The rocks are slippering, you fall and must start over!")
-                start_game()  # Restart the game if an invalid choice is made`   
-        elif yes_no == "no":
-            print("You deside to head back to the beginning of the path and climb the tree!")
-            choice = "tree"
+        if "river_key" in affects_choices:
+            print("You already have the key from the water fall, so you decide to head back to the tree and climb it instead!")
+            tree_path()  # Continue to the tree path if the player already has the key
+        else:
+            print("You follow the river and find a hidden path that leads you to a waterfall. There is a chest at the bottom of the falls! Could it be the treasure?")
+            yes_no = input("Do you want to investigate the chest? (yes/no) ").lower()
+            if yes_no == "yes":
+                dive_climb = input("Should you dive into the water or climb down the cliff to reach the chest? (dive/climb) ").lower()
+                if dive_climb == "dive":
+                    print("You dive into the water and swim towards the chest. As you reach it, you find a hidden compartment with a key inside!")
+                    print("Although you found the key, you realize that the chest is empty. You need to find the lock that this key opens!")
+                    affects_choices.add("river_key")  # Add the key to the player's inventory
+                    choice = input("Would you like to continue exploring the river or head back to the tree? (river/tree) ").lower()
+                elif dive_climb == "climb":
+                    print("The rocks are slippering, you fall and must start over!")
+                    start_game()  # Restart the game if an invalid choice is made`   
+            elif yes_no == "no":
+                print("You deside to head back to the beginning of the path and climb the tree!")
+                tree_path()  # Continue to the tree path if the player chooses not to investigate the chest
     elif choice == "tree":
         print("You climb the tree and get a better view of the surroundings. You spot something shiny in the distance!")
         # Continue the adventure...
@@ -95,6 +107,25 @@ def cave_path():
     else:
         print("Invalid choice. Please choose 'torch' or 'dark'.")
         cave_path()  # Restart the cave path if an invalid choice is made
+
+"""
+Other paths made for the game
+tree_path() - A path for the player to climb the tree and find a hidden item
+"""
+
+def tree_path():
+    print("You climb the tree and get a better view of the surroundings. You spot something shiny in the distance!")
+    choice = input("Do you want to investigate the shiny object? (yes/no) ").lower()
+    
+    if choice == "yes":
+        print("After a long winding and twisting path, you come across the object inbedded in a stone. It looks like a coin. What did that poem say about a 'fee'?")
+        # Continue the adventure...
+    elif choice == "no":
+        print("You decide to head back to the beginning of the path and explore the river instead!")
+        forest_path()  # Continue to the river path if the player chooses not to investigate the shiny object
+    else:
+        print("Invalid choice. Please choose 'yes' or 'no'.")
+        tree_path()  # Restart the tree path if an invalid choice is made
 
 """
 Task 5: Run the adventure game 
